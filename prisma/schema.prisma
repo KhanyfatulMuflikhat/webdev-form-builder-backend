@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  forms     Form[]
+}
+
+model Form {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  status      String     @default("active")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+  questions   Question[]
+  responses   Response[]
+}
+
+model Question {
+  id       Int      @id @default(autoincrement())
+  label    String
+  type     String
+  required Boolean  @default(false)
+  order    Int      @default(0)
+  options  Json?
+  formId   Int
+  form     Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  answers  Answer[]
+}
+
+model Response {
+  id          Int      @id @default(autoincrement())
+  submittedAt DateTime @default(now())
+  formId      Int
+  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  value      String
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  responseId Int
+  response   Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+}
