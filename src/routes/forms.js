@@ -3,6 +3,7 @@ import { getForms, getFormById, createForm, updateForm, deleteForm } from '../co
 import { authenticate } from '../middlewares/auth.js'
 import questionRoutes from './questions.js'
 import responseRoutes from './responses.js'
+import submissionRoutes from './submissions.js'
 
 const router = Router()
 
@@ -14,5 +15,6 @@ router.delete('/:id', authenticate, deleteForm)
 
 router.use('/:formId/questions', questionRoutes)
 router.use('/:formId/responses', responseRoutes)
+router.use('/:formId/submissions', submissionRoutes)
 
 export default router
