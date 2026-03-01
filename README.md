@@ -5,7 +5,7 @@ Backend API untuk aplikasi Form Builder, dibangun dengan Express.js, Prisma, dan
 ## Tech Stack
 
 - Node.js + Express.js
-- Prisma ORM
+- Prisma ORM v5
 - PostgreSQL (Neon.tech)
 - JWT Authentication
 - bcryptjs
@@ -32,7 +32,7 @@ Backend API untuk aplikasi Form Builder, dibangun dengan Express.js, Prisma, dan
 ```bash
    cp .env.example .env
 ```
-   Lalu isi `DATABASE_URL` dengan connection string PostgreSQL kamu dan `JWT_SECRET` dengan string bebas.
+   Lalu isi `DATABASE_URL` dengan connection string PostgreSQL dan `JWT_SECRET` dengan string bebas.
 
 4. Generate Prisma client
 ```bash
@@ -58,11 +58,24 @@ Server berjalan di `http://localhost:3000`
 - `POST /api/auth/login` - Login
 
 ### Forms (butuh Authorization header)
-- `GET /api/forms` - Ambil semua form milik user
-- `GET /api/forms/:id` - Ambil detail form
+- `GET /api/forms` - Ambil semua form milik user (support query: ?search=, ?status=, ?sort=oldest)
+- `GET /api/forms/:id` - Ambil detali form beserta questions
 - `POST /api/forms` - Buat form baru
 - `PUT /api/forms/:id` - Update form
 - `DELETE /api/forms/:id` - Hapus form
+
+### Questions (butuh Authorization header)
+- `GET /api/forms/:formId/questions` - Ambil semua pertanyaan
+- `POST /api/forms/:formId/questions` - Tambah pertanyaan
+- `PUT /api/forms/:formId/questions/:questionId` - Update pertanyaan
+- `DELETE /api/forms/:formId/questions/:questionId` - Hapus pertanyaan
+
+### Responses (tidak butuh Authorization)
+- `POST /api/forms/:formId/responses` - Submit jawaban form
+
+### Submissions (butuh Authorization header)
+- `GET /api/forms/:formId/submissions` - Ambil semua submission
+- `GET /api/forms/:formId/submissions/:submissionId` - Ambil detail submission
 
 ## Environment Variables
 
@@ -71,3 +84,7 @@ Server berjalan di `http://localhost:3000`
 | DATABASE_URL | Connection string PostgreSQL |
 | JWT_SECRET | Secret key untuk JWT |
 | PORT | Port server (default: 3000) |
+
+## Catatan
+- Form yang sudah memiliki submission tidak bisa menghapus atau mengubah tipe pertanyaan
+- Endpoint submissions hanya bisa diakses oleh pembuat form
