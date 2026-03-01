@@ -1,10 +1,16 @@
 import prisma from '../lib/prisma.js'
 
 export const getForms = async (req, res) => {
+  const { search, status, sort } = req.query
+
   try {
     const forms = await prisma.form.findMany({
-      where: { userId: req.user.id },
-      orderBy: { createdAt: 'desc' }
+      where: {
+        userId: req.user.id,
+        ...(search ? { title: { contains: search, mode: 'insensitive' } } : {}),
+        ...(status ? { status } : {}),
+      },
+      orderBy: sort === 'oldest' ? { createdAt: 'asc' } : { createdAt: 'desc' }
     })
     res.json(forms)
   } catch (err) {
